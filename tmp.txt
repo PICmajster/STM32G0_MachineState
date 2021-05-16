@@ -1,0 +1,93 @@
+/*********************************************************************
+*                    SEGGER Microcontroller GmbH                     *
+*                        The Embedded Experts                        *
+**********************************************************************
+
+File    : main.c
+Autor : strefapic.blogspot.com
+MCU: STM32G071KBT6
+
+*/
+
+#include <stdio.h>
+#include <stdlib.h>
+#include <stdint.h>
+#include <stm32g071xx.h>
+
+volatile uint8_t SoftTimer1 = 0  ;
+void LED_OFF(void);
+void LED_ON(void);
+uint8_t MachineState (void);
+
+typedef enum {INITIAL, OFF_STATE, ON_STATE} state ;
+state MyMachine = INITIAL ;
+
+int main(void) {
+SystemInit();
+RCC->IOPENR |= RCC_IOPENR_GPIOAEN; //Open clock for GPIOA
+/* PA8 set Out for LED*/
+GPIOA->MODER &= ~GPIO_MODER_MODE8_1 ; /* MODE8 -> 0b01  */
+/* SysTick config*/
+SysTick_Config(SystemCoreClock * 0.5); //ok 0.5 s
+
+while(1){
+MachineState();
+}
+}
+
+void LED_OFF(void){
+GPIOA->ODR &= ~GPIO_ODR_OD8;
+}
+
+void LED_ON(void){
+GPIOA->ODR |= GPIO_ODR_OD8;
+}
+
+uint8_t MachineState (void){
+switch (MyMachine){
+    
+    case INITIAL:
+    if(!SoftTimer1){
+    MyMachine = OFF_STATE;
+    SoftTimer1 = 2; /*SysTick x SoftTimer1 = 0.5s x 2 = 1s*/
+    return 1;
+    }
+    return -1;
+
+    case OFF_STATE:
+       if(!SoftTimer1){
+         SoftTimer1 = 4 ; /*SysTick x SoftTimer1 = 0.5s x 4 = 2s*/
+         LED_OFF();
+         MyMachine = ON_STATE ;
+         return 1;
+    }
+
+    return -1;
+
+    case ON_STATE:
+       if(!SoftTimer1){
+         SoftTimer1 = 6 ; /*SysTick x SoftTimer1 = 0.5s x 6 = 3s*/
+         LED_ON();
+         MyMachine = OFF_STATE ;
+         return 1;
+    }
+    return -1;
+
+    default:
+    //error();
+    return -1;
+}
+return MyMachine ;
+}   
+
+
+
+
+/*Interrupt Handler for SysTick*/
+void SysTick_Handler(void){
+
+uint8_t x;
+    x = SoftTimer1 ;
+    if (x) SoftTimer1 = --x ;
+   
+}       

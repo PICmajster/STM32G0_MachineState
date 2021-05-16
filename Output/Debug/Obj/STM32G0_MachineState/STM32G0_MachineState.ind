@@ -1,0 +1,7 @@
+"Output/Debug/Obj/STM32G0_MachineState/system_stm32g0xx.o"
+"Output/Debug/Obj/STM32G0_MachineState/main.o"
+"Output/Debug/Obj/STM32G0_MachineState/SEGGER_THUMB_Startup.o"
+"Output/Debug/Obj/STM32G0_MachineState/STM32G0xx_Startup.o"
+"Output/Debug/Obj/STM32G0_MachineState/STM32G07x_Vectors.o"
+"/usr/share/segger_embedded_studio_for_arm_5.42/segger-rtl/libs/libc_v6m_t_le_eabi.a"
+"/usr/share/segger_embedded_studio_for_arm_5.42/lib/SEGGER_crtinit_v6m_little.o"
